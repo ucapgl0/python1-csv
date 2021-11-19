@@ -28,6 +28,19 @@ def n_max(list1, n):
 
     return list(max_num_index_list)
 
+def create_name_LastMeasurement_dict(name, value):
+    d = {}
+    for i in range(len(name)):
+        if value[i] == '':
+            value[i] = 0
+        if i < len(name) - 1:
+            if name[i] != name[i+1]:
+                d[name[i]] = float(value[i])
+        else:
+            d[name[i]] = float(value[i])
+    return d
+     
+
 def find_key(dictionary,value1):
     for key in dictionary:
         if dictionary[key] == value1:

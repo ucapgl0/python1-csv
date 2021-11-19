@@ -176,24 +176,17 @@ class GlacierCollection:
         return list(set(id1).intersection(id2,id3))
 
     def sort_by_latest_mass_balance(self, n, reverse):
-        """Return the N glaciers with the highest area accumulated in the last measurement."""     
-        d = {}
-        for i in range(len(self.M_name)):
-            if self.value[i] == '':
-                self.value[i] = 0
-            if i < len(self.M_name) - 1:
-                if self.M_name[i] != self.M_name[i+1]:
-                   d[self.M_name[i]] = int(self.value[i])
-            else:
-                d[self.M_name[i]] = int(self.value[i])
+        """Return the N glaciers with the highest area accumulated in the last measurement."""
+             
+        dict = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
+        list_value = list(dict.values()) 
 
-        list_value = list(d.values()) 
         a = []
         if reverse == False:
             most_value = utils.n_max(list_value,n)
             
             for i in range(n):
-                b = utils.find_key(d,list_value[most_value[i]])
+                b = utils.find_key(dict,list_value[most_value[i]])
                 c = utils.return_object(b, self.id, self.name, self.unit, self.lat, self.lon, self.code)
                 a.append(c)
             return a
@@ -202,10 +195,11 @@ class GlacierCollection:
             most_value = utils.n_min(list_value,n)
             
             for i in range(n):
-                b = utils.find_key(d,list_value[most_value[i]])
+                b = utils.find_key(dict,list_value[most_value[i]])
                 c = utils.return_object(b, self.id, self.name, self.unit, self.lat, self.lon, self.code)
                 a.append(c)
             return a       
+        
 
         #raise NotImplementedError
 
@@ -224,5 +218,5 @@ c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
 #print(c.filter_by_code('4?6'))
 #print(c.find_nearest(-30,-70,5))
-print(c.sort_by_latest_mass_balance(5,True))
+print(c.sort_by_latest_mass_balance(5,False))
 #print(c.summary())
