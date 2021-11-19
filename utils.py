@@ -15,6 +15,7 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
     raise NotImplementedError
 
+
 def n_min(list1, n):
     
     max_num_index_list = map(list1.index, heapq.nsmallest(n, list1))
@@ -27,6 +28,7 @@ def n_max(list1, n):
     max_num_index_list = map(list1.index, heapq.nlargest(n, list1))
 
     return list(max_num_index_list)
+
 
 def create_name_LastMeasurement_dict(name, value):
     d = {}
@@ -46,10 +48,19 @@ def find_key(dictionary,value1):
         if dictionary[key] == value1:
             return key
 
+
 def return_object(Object_name, glacier_id, name, unit, lat, lon, code):
     for i in range(len(name)):
         if name[i] == Object_name:
             return [glacier_id[i], name[i], unit[i], lat[i], lon[i], code[i]]
 
 
+def calculate_shunk_rate(list1):
+    a = 0
+    for i in range(len(list1)):
+        if list1[i] < 0:
+            a += 1
+    b = a / len(list1)
+    c = int(round(b,2) * 100)
+    return c
           

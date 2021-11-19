@@ -177,7 +177,7 @@ class GlacierCollection:
 
     def sort_by_latest_mass_balance(self, n, reverse):
         """Return the N glaciers with the highest area accumulated in the last measurement."""
-             
+
         dict = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
         list_value = list(dict.values()) 
 
@@ -200,23 +200,29 @@ class GlacierCollection:
                 a.append(c)
             return a       
         
-
         #raise NotImplementedError
 
     def summary(self):
-        
+
         y = sorted(self.year)
-        print('This collection has %d glaciers' % len(self.name))
-        print('The earliest measurement was in %d' % int(y[0]))
+        dict = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
+        list_value = list(dict.values()) 
+        a = utils.calculate_shunk_rate(list_value)
+        
+        print('This collection has %d glaciers.' % len(self.name))
+        print('The earliest measurement was in %d.' % int(y[0]))
+        print(str(a) + "%" + " of glaciers shrunk in their last measurement.")
         
         #raise NotImplementedError
 
     def plot_extremes(self, output_path):
         raise NotImplementedError
-    
+
+
+
 c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
 #print(c.filter_by_code('4?6'))
 #print(c.find_nearest(-30,-70,5))
-print(c.sort_by_latest_mass_balance(5,False))
-#print(c.summary())
+#print(c.sort_by_latest_mass_balance(5,False))
+print(c.summary())
