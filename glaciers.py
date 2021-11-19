@@ -196,7 +196,7 @@ class GlacierCollection:
                 b = utils.find_key(d,list_value[most_value[i]])
                 c = utils.return_object(b, self.id, self.name, self.unit, self.lat, self.lon, self.code)
                 a.append(c)
-            return list_value, most_value
+            return a
 
         if reverse == True:
             most_value = utils.n_min(list_value,n)
@@ -224,5 +224,5 @@ c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
 #print(c.filter_by_code('4?6'))
 #print(c.find_nearest(-30,-70,5))
-print(c.sort_by_latest_mass_balance(5,False))
+print(c.sort_by_latest_mass_balance(5,True))
 #print(c.summary())

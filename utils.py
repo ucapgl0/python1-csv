@@ -16,23 +16,17 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     raise NotImplementedError
 
 def n_min(list1, n):
-    a = []
-    for i in range(n):
-        max_num_index_list = map(list1.index, heapq.nsmallest(1, list1))
-        k = list(max_num_index_list)[0]
-        list1[k] = math.inf
-        a.append(k)
-    return a
+    
+    max_num_index_list = map(list1.index, heapq.nsmallest(n, list1))
+
+    return list(max_num_index_list)
 
 
 def n_max(list1, n):
-    a = []
-    for i in range(n):
-        max_num_index_list = map(list1.index, heapq.nlargest(1, list1))
-        k = list(max_num_index_list)[0]
-        #list1[k] = -math.inf
-        a.append(k)
-    return a
+
+    max_num_index_list = map(list1.index, heapq.nlargest(n, list1))
+
+    return list(max_num_index_list)
 
 def find_key(dictionary,value1):
     for key in dictionary:
