@@ -8,6 +8,8 @@ def haversine_distance(lat1, lon1, lat2, lon2): # Use in calculating nearest gla
     
     Latitude and longitude for each point are given in degrees.
     """
+    if lat2 < -90 or lat2 > 90 or lon2 < -180 or lon2 > 180:
+        raise NotImplementedError('the latitude should be between -90 and 90, the longitude between -180 and 180')
     R = 6371
     arcs = math.asin
     s = math.sin
@@ -70,7 +72,7 @@ def create_name_LastMeasurement_dict(name, year, value):
   
 
 def find_key(dictionary,value1): 
-    # Use in sort_by_latest_mass_balance() 
+    # Use in sort_by_latest_mass_balance() and plot_extremes()
     for key in dictionary:
         if dictionary[key] == value1:
             return key
