@@ -128,6 +128,8 @@ class GlacierCollection:
             n = 5
         if n > len(self.name):
             raise NotImplementedError('n should not be over the number of glacier')
+        if lat < -90 or lat > 90 or lon < 180 or lon > 180:
+            raise NotImplementedError('the latitude should be between -90 and 90, the longitude between -180 and 180')
         distance = []
         for i in range(len(self.lat)):
             la = float(self.lat[i])
@@ -175,18 +177,19 @@ class GlacierCollection:
         
         return list(set(id1).intersection(id2,id3))
 
+
     def sort_by_latest_mass_balance(self, n, reverse):
         """Return the N glaciers with the highest area accumulated in the last measurement."""
 
-        dict = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
-        list_value = list(dict.values()) 
+        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
+        list_value = list(dict1.values()) 
 
         a = []
         if reverse == False:
             most_value = utils.n_max(list_value,n)
             
             for i in range(n):
-                b = utils.find_key(dict,list_value[most_value[i]])
+                b = utils.find_key(dict1,list_value[most_value[i]])
                 c = utils.return_object(b, self.id, self.name, self.unit, self.lat, self.lon, self.code)
                 a.append(c)
             return a
@@ -195,7 +198,7 @@ class GlacierCollection:
             most_value = utils.n_min(list_value,n)
             
             for i in range(n):
-                b = utils.find_key(dict,list_value[most_value[i]])
+                b = utils.find_key(dict1,list_value[most_value[i]])
                 c = utils.return_object(b, self.id, self.name, self.unit, self.lat, self.lon, self.code)
                 a.append(c)
             return a       
@@ -204,9 +207,9 @@ class GlacierCollection:
 
     def summary(self):
 
-        y = sorted(self.year)
-        dict = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
-        list_value = list(dict.values()) 
+        y = sorted(self.year) # array the year of measurement
+        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
+        list_value = list(dict1.values()) 
         a = utils.calculate_shunk_rate(list_value)
         
         print('This collection has %d glaciers.' % len(self.name))
@@ -216,6 +219,16 @@ class GlacierCollection:
         #raise NotImplementedError
 
     def plot_extremes(self, output_path):
+        
+        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
+        list_value = list(dict1.values())
+        largest_value = utils.n_max(list_value,1)
+        l_name = utils.find_key(dict1, list_value[largest_value[0]])
+        a = utils.mass_change(l_name, self.M_name, self.year, self.value)
+        
+        return a
+        
+        
         raise NotImplementedError
 
 
@@ -224,5 +237,6 @@ c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
 #print(c.filter_by_code('4?6'))
 #print(c.find_nearest(-30,-70,5))
-print(c.sort_by_latest_mass_balance(6,False))
+#print(c.sort_by_latest_mass_balance(5,False))
 #print(c.summary())
+print(c.plot_extremes(1))
