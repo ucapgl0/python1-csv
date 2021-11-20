@@ -14,9 +14,13 @@ def haversine_distance(lat1, lon1, lat2, lon2): # Use in calculating nearest gla
     arcs = math.asin
     s = math.sin
     c = math.cos
-    d = 2*R*arcs(math.sqrt(s((lat2-lat1)/2)**2 + c(lat1)*c(lat2)*(s((lon2-lon1)/2)**2)))
+    lat1_r = math.radians(lat1)
+    lat2_r = math.radians(lat2)
+    lon1_r = math.radians(lon1)
+    lon2_r = math.radians(lon2)
+    d = 2*R*arcs(math.sqrt(s((lat2_r-lat1_r)/2)**2 + c(lat1_r)*c(lat2_r)*(s((lon2_r-lon1_r)/2)**2)))
     return d
-
+    
     raise NotImplementedError
 
 
@@ -52,7 +56,7 @@ def create_name_LastMeasurement_dict(name, year, value):
                                 s += float(value[j])
                             d[name[i]] = s
                             s = 0
-                            break
+                            break                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
                         else:
                             d[name[i]] = float(value[i1])
                             break
@@ -82,7 +86,7 @@ def return_object(Object_name, glacier_id, name, unit, lat, lon, code):
     # Use in sort_by_latest_mass_balance() 
     for i in range(len(name)):
         if name[i] == Object_name:
-            return [glacier_id[i], name[i], unit[i], lat[i], lon[i], code[i]]
+            return [glacier_id[i], name[i], unit[i], float(lat[i]), float(lon[i]), int(code[i])]
 
 
 def calculate_shunk_rate(list1):
