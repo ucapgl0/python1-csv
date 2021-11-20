@@ -9,15 +9,24 @@ file_path_2 = Path(r"C:\Users\ASUS\Desktop\sheet-EE.csv")
 file_path_3 = Path(r"C:\Users\ASUS\Desktop\python_glaciers")
 
 class Glacier:
-    single_glacier = {}
+    
     def __init__(self, glacier_id, name, unit, lat, lon, code):
-
+        self.glacier_id = glacier_id
+        self.name = name
+        self.unit = unit
+        self.lat = lat
+        self.lon = lon
+        self.code = code
+        self.glacier_measurement = {}
         
-        self.glacier[name] = 
+
         #raise NotImplementedError
 
     def add_mass_balance_measurement(self, year, mass_balance, boolean):
-        self.measurement = {}
+        #self.measurement = {}
+        # if boolean == True 
+
+
         raise NotImplementedError
 
     def plot_mass_balance(self, output_path):
@@ -36,40 +45,30 @@ class GlacierCollection:
             list_id = []
             list_latitude = []
             list_longitude = []
-            list_code = []            
+            list_code = []
+            self.glacier = {}            
             for i, row in enumerate(filedata_A):
                 if i > 0 and i < len(filedata_A):
-                    list_unit.append(row[0])
-            self.unit = list_unit
-
-            for i, row in enumerate(filedata_A):
-                if i > 0 and i < len(filedata_A):
+                    list_unit.append(row[0])                    
                     list_name.append(row[1])
+                    list_id.append(row[2])                    
+                    list_latitude.append(float(row[5]))                    
+                    list_longitude.append(float(row[6]))                 
+                    list_code.append(int(row[7]+row[8]+row[9]))
+                    d = Glacier(self.id[i], self.name, self.unit, self.lat, self.lon, self.code)
+            self.unit = list_unit
             self.name = list_name
-
-            for i, row in enumerate(filedata_A):
-                if i > 0 and i < len(filedata_A):
-                    list_id.append(row[2])
             self.id = list_id
-
-            for i, row in enumerate(filedata_A):
-                if i > 0 and i < len(filedata_A):
-                    list_latitude.append(row[5])
             self.lat = list_latitude
-
-            for i, row in enumerate(filedata_A):
-                if i > 0 and i < len(filedata_A):
-                    list_longitude.append(row[6])
             self.lon = list_longitude
-
-            for i, row in enumerate(filedata_A):
-                if i > 0 and i < len(filedata_A):
-                    list_code.append(row[7]+row[8]+row[9])
             self.code = list_code
+
+               
+                
+
             
-            for i in range(len(filedata_A)):
-                Glacier(self.id[0],self.name[0],self.unit[0],self.lat[0],self.lon[0],self.code[0])
-            
+                
+                
 
     def read_mass_balance_data(self, file_path):
         #raise NotImplementedError
@@ -86,45 +85,34 @@ class GlacierCollection:
             for i, row in enumerate(filedata_EE):
                 if i > 0 and i < len(filedata_EE):
                     list_Munit.append(row[0])
-            self.M_unit = list_Munit
+                    self.M_unit = list_Munit
 
-            for i, row in enumerate(filedata_EE):
-                if i > 0 and i < len(filedata_EE):
                     list_Mname.append(row[1])
-            self.M_name = list_Mname
+                    self.M_name = list_Mname
 
-            for i, row in enumerate(filedata_EE):
-                if i > 0 and i < len(filedata_EE):
                     list_Mid.append(row[2])
-            self.M_id = list_Mid
+                    self.M_id = list_Mid
 
-            for i, row in enumerate(filedata_EE):
-                if i > 0 and i < len(filedata_EE):
                     list_year.append(row[3])
-            self.year = list_year
+                    self.year = list_year
 
-            for i, row in enumerate(filedata_EE):
-                if i > 0 and i < len(filedata_EE):
                     list_lb.append(row[4])
-            self.lb = list_lb
+                    self.lb = list_lb
 
-            for i, row in enumerate(filedata_EE):
-                if i > 0 and i < len(filedata_EE):
                     list_ub.append(row[5])
-            self.ub = list_ub
+                    self.ub = list_ub
 
-            for i, row in enumerate(filedata_EE):
-                if i > 0 and i < len(filedata_EE):
                     list_ab.append(row[11])
-            self.value = list_ab
-            a = 0
-            for i in range(len(self.M_name)):
-                a = 0
-                for j in range(len(self.name)):
-                    if self.M_name[i] == self.name[j]:
-                        a += 1
-                if a == 0:
-                    raise NotImplementedError('All the glaciers should be defined')
+                    self.value = list_ab
+            
+            #a = 0
+            #for i in range(len(self.M_name)):
+                #a = 0
+                #for j in range(len(self.name)):
+                    #if self.M_name[i] == self.name[j]:
+                        #a += 1
+                #if a == 0:
+                    #raise NotImplementedError('All the glaciers should be defined')
             #for i in range(len(filedata_EE)):
                 #Glacier.add_mass_balance_measurement(self.year[i],self.value[i])
 
