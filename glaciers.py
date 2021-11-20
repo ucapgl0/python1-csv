@@ -1,10 +1,12 @@
 import csv
 from pathlib import Path
 import matplotlib.pyplot as plt
+import os
 import utils
 
 file_path_1 = Path(r"C:\Users\ASUS\Desktop\python_glaciers\sheet-A.csv")
 file_path_2 = Path(r"C:\Users\ASUS\Desktop\python_glaciers\sheet-EE.csv")
+file_path_3 = Path(r"C:\Users\ASUS\Desktop\python_glaciers")
 
 class Glacier:
     def __init__(self, glacier_id, name, unit, lat, lon, code):
@@ -181,7 +183,7 @@ class GlacierCollection:
     def sort_by_latest_mass_balance(self, n, reverse):
         """Return the N glaciers with the highest area accumulated in the last measurement."""
 
-        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
+        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.year, self.value)
         list_value = list(dict1.values()) 
 
         a = []
@@ -220,25 +222,32 @@ class GlacierCollection:
 
     def plot_extremes(self, output_path):
         
-        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.value)
+
+        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.year, self.value)
         list_value = list(dict1.values())
         largest_value = utils.n_max(list_value,1)
         l_name = utils.find_key(dict1, list_value[largest_value[0]])
         l_dict = utils.mass_change(l_name, self.M_name, self.year, self.value)
         x1 = list(l_dict.keys())
-        y1 = list(l_dict.values())    
+        y1 = list(l_dict.values())           
         plt.plot(x1, y1, c='b', label = l_name + "(grew the most)")
         
+
         smallest_value = utils.n_min(list_value,1)
         s_name = utils.find_key(dict1, list_value[smallest_value[0]])
         s_dict = utils.mass_change(s_name, self.M_name, self.year, self.value)
         x2 = list(s_dict.keys())
-        y2 = list(s_dict.values())    
+        y2 = list(s_dict.values())            
         plt.plot(x2, y2, c='r', label=s_name + "(shrunk the most)")
         plt.title('Mass balance measurements against the years for two extreme glaciers')
         plt.xlabel('Year')
         plt.ylabel('Mass_balance')
         plt.legend()
+
+        my_path = os.path.abspath(output_path) # Figures out the absolute path for you in case your working directory moves around.
+        my_file = 'Mass balance measurements for two extreme glaciers.png'
+        plt.savefig(os.path.join(my_path, my_file))  
+        
         plt.show()
         
         #raise NotImplementedError
@@ -251,4 +260,4 @@ c.read_mass_balance_data(file_path_2)
 #print(c.find_nearest(-30,-70,5))
 #print(c.sort_by_latest_mass_balance(5,False))
 #print(c.summary())
-print(c.plot_extremes(1))
+print(c.plot_extremes(file_path_3))
