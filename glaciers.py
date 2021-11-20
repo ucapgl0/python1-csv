@@ -224,12 +224,24 @@ class GlacierCollection:
         list_value = list(dict1.values())
         largest_value = utils.n_max(list_value,1)
         l_name = utils.find_key(dict1, list_value[largest_value[0]])
-        a = utils.mass_change(l_name, self.M_name, self.year, self.value)
+        l_dict = utils.mass_change(l_name, self.M_name, self.year, self.value)
+        x1 = list(l_dict.keys())
+        y1 = list(l_dict.values())    
+        plt.plot(x1, y1, c='b', label = l_name + "(grew the most)")
         
-        return a
+        smallest_value = utils.n_min(list_value,1)
+        s_name = utils.find_key(dict1, list_value[smallest_value[0]])
+        s_dict = utils.mass_change(s_name, self.M_name, self.year, self.value)
+        x2 = list(s_dict.keys())
+        y2 = list(s_dict.values())    
+        plt.plot(x2, y2, c='r', label=s_name + "(shrunk the most)")
+        plt.title('Mass balance measurements against the years for two extreme glaciers')
+        plt.xlabel('Year')
+        plt.ylabel('Mass_balance')
+        plt.legend()
+        plt.show()
         
-        
-        raise NotImplementedError
+        #raise NotImplementedError
 
 
 
