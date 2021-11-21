@@ -50,7 +50,7 @@ def calculate_shunk_rate(list1):
             a += 1
     b = a / len(list1)
     c = int(round(b,2) * 100)
-    
+
     return c
 
 
@@ -63,9 +63,7 @@ def mass_change(Object_name, name, year, value, lb):
             a.append(i)  
     a1 = a[0]
     a2 = a[-1]
-    for i1 in range(a1, a2+1):
-        if value[i1] == '':
-            value[i1] = 0
+    
     c = -1
     boolean = []
     mass_balance = []

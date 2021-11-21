@@ -41,6 +41,7 @@ class Glacier:
         
         #raise NotImplementedError
     def plot_mass_balance(self, output_path):
+        
         x = list(self.glacier_measurement.keys())
         y = list(self.glacier_measurement.values())
         plt.plot(x, y, c='y')
@@ -106,13 +107,18 @@ class GlacierCollection:
             self.mass_balance = {}
             for i, row in enumerate(filedata_EE):
                 if i > 0 and i < len(filedata_EE):
-                    list_Munit.append(row[0])                   
-                    list_Mname.append(row[1])                    
-                    list_Mid.append(row[2])                   
-                    list_year.append(row[3])
-                    list_lb.append(row[4])                    
-                    list_value.append(row[11])
-            
+                    if int(row[3]) > 2021:
+                        raise NotImplementedError('The year could not be in future.')
+                    
+                    if row[11] != '':
+                        # read the data if the mass balance is not empty(improper)
+                        list_Munit.append(row[0])                   
+                        list_Mname.append(row[1])                    
+                        list_Mid.append(row[2])                   
+                        list_year.append(row[3])
+                        list_lb.append(row[4])                    
+                        list_value.append(row[11])
+                                  
             # Check all glacier measurement have already been defined correctly
             v = list(self.glacier.values())
             for i in range(len(list_Mname)):
@@ -122,8 +128,7 @@ class GlacierCollection:
                         a += 1
                 if a == 0:
                     raise NotImplementedError('All the glaciers should be defined correctly.')
-
-
+            
             for i in range(len(list_Mname)):
                 if i < len(list_Mname)-1:
                     if list_Mname[i] != list_Mname[i+1]:
@@ -140,11 +145,9 @@ class GlacierCollection:
                     g = Glacier
                     g.add_mass_balance_measurement(self.glacier[list_Mname[i]].glacier_measurement, year_list, value_list, boolean)
 
-
             
-
     def find_nearest(self, lat, lon, n):
-        """Get the n glaciers closest to the given coordinates."""
+        
         if type(n) != int:
             n = 5
         if n > len(self.glacier):
@@ -168,7 +171,7 @@ class GlacierCollection:
 
 
     def filter_by_code(self, code_pattern):
-        """Return the names of glaciers whose codes match the given pattern."""
+        
         if len(code_pattern) != 3:
             raise NotImplementedError("The length of code_pattern should be 3")
         if type(code_pattern) != str:
@@ -209,7 +212,8 @@ class GlacierCollection:
 
     def sort_by_latest_mass_balance(self, n, reverse):
         """Return the N glaciers with the highest area accumulated in the last measurement."""
-
+        if n > len(self.glacier):
+            raise NotImplementedError('n should not be over the number of object.')
         list_keys = list(self.glacier.keys())
         name = []
         latest_value = []
@@ -270,22 +274,21 @@ class GlacierCollection:
         
         list_keys = list(self.glacier.keys())
         name = []
-        last_value = []
+        latest_value = []
         for i in range(len(self.glacier)):
             if self.glacier[list_keys[i]].glacier_measurement != {}:
                 measurement = self.glacier[list_keys[i]].glacier_measurement
                 # the name of single glacier measurement
                 name.append(list_keys[i])
                 # the latest measurement value of this glacier
-                last_value.append(list(measurement.values())[-1])
+                latest_value.append(list(measurement.values())[-1])
         
-        largest_value = utils.n_max(last_value,1)
-        smallest_value = utils.n_min(last_value,1)
+        largest_value = utils.n_max(latest_value,1)
+        smallest_value = utils.n_min(latest_value,1)
         key_largest = name[largest_value[0]]
         key_smallest = name[smallest_value[0]]
         largest_change = self.glacier[key_largest].glacier_measurement
         smallest_change = self.glacier[key_smallest].glacier_measurement
-
 
         x1 = list(largest_change.keys())
         y1 = list(largest_change.values())           
@@ -313,8 +316,8 @@ c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
 #print(c.filter_by_code('6?8'))
 #print(c.find_nearest(-30,-70,5))
-#print(c.sort_by_latest_mass_balance(5,False))
-print(c.summary())
+#print(c.sort_by_latest_mass_balance(n,False))
+#print(c.summary())
 #print(c.plot_extremes(file_path_3))
 #Glacier.plot_mass_balance(c.glacier['REMBESDALSKAAKA'], file_path_3)
 
