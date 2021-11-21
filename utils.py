@@ -50,12 +50,6 @@ def find_key(dictionary,value1):
             return key
 
 
-def return_object(Object_name, glacier_id, name, unit, lat, lon, code): 
-    # Use in sort_by_latest_mass_balance() 
-    for i in range(len(name)):
-        if name[i] == Object_name:
-            return [glacier_id[i], name[i], unit[i], float(lat[i]), float(lon[i]), int(code[i])]
-
 
 def calculate_shunk_rate(list1):
     # Use for summary()
@@ -76,7 +70,7 @@ def mass_change(Object_name, name, year, value):
         if name[i] == Object_name:
             a.append(i)  
     a1 = a[0]
-    a2 = a[len(a)-1]
+    a2 = a[-1]
     for i1 in range(a1, a2+1):
         if value[i1] == '':
             value[i1] = 0

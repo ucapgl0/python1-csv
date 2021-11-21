@@ -120,26 +120,26 @@ class GlacierCollection:
 
     def find_nearest(self, lat, lon, n):
         """Get the n glaciers closest to the given coordinates."""
-        if n == None:
-            n = 5
         if type(n) != int:
-            raise NotImplementedError('n should be a integer')
-        if n > len(self.name) or n <= 0:
-            raise NotImplementedError('n should not be over the number of glacier or smaller than 0')
+            n = 5
+        if n > len(self.glacier):
+            raise NotImplementedError('n should not be over the number of glacier')
         if lat < -90 or lat > 90 or lon < -180 or lon > 180:
             raise NotImplementedError('the latitude should be between -90 and 90, the longitude between -180 and 180')
         distance = []
-        for i in range(len(self.lat)):
-            la = float(self.lat[i])
-            lo = float(self.lon[i])
+        list_key = list(self.glacier.keys())
+        for i in range(len(self.glacier)):
+            la = float(self.glacier[list_key[i]].lat)
+            lo = float(self.glacier[list_key[i]].lon)
             distance.append(utils.haversine_distance(lat,lon,la,lo))
 
         a = utils.n_min(distance,n)
         name = []
         for i in range(n):
-            name.append(self.name[a[i]])
+            name.append(self.glacier[list_key[a[i]]].name)
 
         return name 
+    
 
     def filter_by_code(self, code_pattern):
         """Return the names of glaciers whose codes match the given pattern."""
@@ -152,26 +152,30 @@ class GlacierCollection:
         id1 = []
         id2 = []
         id3 = []
+        list_key = list(self.glacier.keys())
         if code_pattern[0] != '?':
-            for i in range(len(self.code)):
-                if code_pattern[0] == self.code[i][0]:
-                    id1.append(self.name[i])
+            for i in range(len(self.glacier)):
+                if code_pattern[0] == str(self.glacier[list_key[i]].code)[0]:
+                    id1.append(self.glacier[list_key[i]].name)
         else:
-            id1 = self.name
+            for i in range(len(self.glacier)):
+                id1.append(self.glacier[list_key[i]].name)
 
         if code_pattern[1] != '?':
-            for i in range(len(self.code)):
-                if code_pattern[1] == self.code[i][1]:
-                    id2.append(self.name[i])
+            for i in range(len(self.glacier)):
+                if code_pattern[1] == str(self.glacier[list_key[i]].code)[1]:
+                    id2.append(self.glacier[list_key[i]].name)
         else:
-            id2 = self.name
+            for i in range(len(self.glacier)):
+                id2.append(self.glacier[list_key[i]].name)
 
         if code_pattern[2] != '?':
-            for i in range(len(self.code)):
-                if code_pattern[2] == self.code[i][2]:
-                    id3.append(self.name[i])
+            for i in range(len(self.glacier)):
+                if code_pattern[2] == str(self.glacier[list_key[i]].code)[2]:
+                    id3.append(self.glacier[list_key[i]].name)
         else:
-            id3 = self.name
+            for i in range(len(self.glacier)):
+                id3.append(self.glacier[list_key[i]].name)
         
         return list(set(id1).intersection(id2,id3))
 
@@ -179,62 +183,90 @@ class GlacierCollection:
     def sort_by_latest_mass_balance(self, n, reverse):
         """Return the N glaciers with the highest area accumulated in the last measurement."""
 
-        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.year, self.value)
-        list_value = list(dict1.values()) 
-
+        list_keys = list(self.glacier.keys())
+        name = []
+        last_value = []
+        for i in range(len(self.glacier)):
+            if self.glacier[list_keys[i]].glacier_measurement != {}:
+                measurement = self.glacier[list_keys[i]].glacier_measurement
+                # the name of single glacier measurement
+                name.append(list_keys[i])
+                # the latest measurement value of this glacier
+                last_value.append(list(measurement.values())[-1])
+                
         a = []
         if reverse == False:
-            most_value = utils.n_max(list_value,n)
+            largest_value = utils.n_max(last_value,n)
             
             for i in range(n):
-                b = utils.find_key(dict1,list_value[most_value[i]])
-                c = utils.return_object(b, self.id, self.name, self.unit, self.lat, self.lon, self.code)
-                a.append(c)
+                key = name[largest_value[i]]
+                glacier_object = self.glacier[key]
+                a.append(glacier_object)
             return a
 
         if reverse == True:
-            most_value = utils.n_min(list_value,n)
+            smallest_value = utils.n_min(last_value,n)
             
             for i in range(n):
-                b = utils.find_key(dict1,list_value[most_value[i]])
-                c = utils.return_object(b, self.id, self.name, self.unit, self.lat, self.lon, self.code)
-                a.append(c)
-            return a       
+                key = name[smallest_value[i]]
+                glacier_object = self.glacier[key]
+                a.append(glacier_object)
+            return a    
         
         #raise NotImplementedError
+
 
     def summary(self):
-
-        y = sorted(self.year) # array the year of measurement
-        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.year, self.value)
-        list_value = list(dict1.values()) 
-        a = utils.calculate_shunk_rate(list_value)
         
-        print('This collection has %d glaciers.' % len(self.name))
-        print('The earliest measurement was in %d.' % int(y[0]))
-        print(str(a) + "%" + " of glaciers shrunk in their last measurement.")
+        list_keys = list(self.glacier.keys())
+        year = []
+        last_value = []
+        for i in range(len(self.glacier)):
+            if self.glacier[list_keys[i]].glacier_measurement != {}:
+                measurement = self.glacier[list_keys[i]].glacier_measurement
+                # the earliest year of single glacier measurement
+                year.append(list(measurement.keys())[0])
+                # the latest measurement value of this glacier
+                last_value.append(list(measurement.values())[-1])
+        year.sort()
+                
+        shunk_rate = utils.calculate_shunk_rate(last_value)
+        
+        print('This collection has %d glaciers.' % len(self.glacier))
+        print('The earliest measurement was in %d.' % year[0])
+        print(str(shunk_rate) + "%" + " of glaciers shrunk in their last measurement.")
         
         #raise NotImplementedError
+
 
     def plot_extremes(self, output_path):
         
-        dict1 = utils.create_name_LastMeasurement_dict(self.M_name, self.year, self.value)
-        list_value = list(dict1.values())
+        list_keys = list(self.glacier.keys())
+        name = []
+        last_value = []
+        for i in range(len(self.glacier)):
+            if self.glacier[list_keys[i]].glacier_measurement != {}:
+                measurement = self.glacier[list_keys[i]].glacier_measurement
+                # the name of single glacier measurement
+                name.append(list_keys[i])
+                # the latest measurement value of this glacier
+                last_value.append(list(measurement.values())[-1])
 
-        largest_value = utils.n_max(list_value,1)
-        l_name = utils.find_key(dict1, list_value[largest_value[0]])
-        l_dict = utils.mass_change(l_name, self.M_name, self.year, self.value)
-        x1 = list(l_dict.keys())
-        y1 = list(l_dict.values())           
-        plt.plot(x1, y1, c='b', label = l_name + "(grew the most)")
+        largest_value = utils.n_max(last_value,1)
+        smallest_value = utils.n_min(last_value,1)
+        key_largest = name[largest_value[0]]
+        key_smallest = name[smallest_value[0]]
+        largest_change = self.glacier[key_largest].glacier_measurement
+        smallest_change = self.glacier[key_smallest].glacier_measurement
+
+
+        x1 = list(largest_change.keys())
+        y1 = list(largest_change.values())           
+        plt.plot(x1, y1, c='b', label = name[largest_value[0]] + "(grew the most)")       
         
-
-        smallest_value = utils.n_min(list_value,1)
-        s_name = utils.find_key(dict1, list_value[smallest_value[0]])
-        s_dict = utils.mass_change(s_name, self.M_name, self.year, self.value)
-        x2 = list(s_dict.keys())
-        y2 = list(s_dict.values())            
-        plt.plot(x2, y2, c='r', label=s_name + "(shrunk the most)")
+        x2 = list(smallest_change.keys())
+        y2 = list(smallest_change.values())            
+        plt.plot(x2, y2, c='r', label=name[smallest_value[0]] + "(shrunk the most)")
         plt.title('Mass balance measurements against the years for two extreme glaciers')
         plt.xlabel('Year')
         plt.ylabel('Mass_balance')
@@ -253,8 +285,8 @@ class GlacierCollection:
 c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
 #print(c.filter_by_code('6?8'))
-print(c.find_nearest(-30,-70,5))
+#print(c.find_nearest(-30,-70,5))
 #print(c.sort_by_latest_mass_balance(5,False))
 #print(c.summary())
-#print(c.plot_extremes(file_path3))
+print(c.plot_extremes(file_path_3))
 #g = Glacier('03292', 'ARTESONRAJU', 'PE', -8.95, -77.62, 534).plot_mass_balance(file_path_3)
