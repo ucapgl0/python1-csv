@@ -41,15 +41,6 @@ def n_max(list1, n):
 
 
 
-  
-
-def find_key(dictionary,value1): 
-    # Use in sort_by_latest_mass_balance() and plot_extremes()
-    for key in dictionary:
-        if dictionary[key] == value1:
-            return key
-
-
 
 def calculate_shunk_rate(list1):
     # Use for summary()
@@ -107,11 +98,7 @@ def mass_change(Object_name, name, year, value):
                         mass_balance.append(float(value[i3]))
                     boolean.append(True)
                     d[int(year[i2])] = mass_balance
-     
- 
-
-
-    
+      
     return d, boolean
 
 

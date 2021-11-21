@@ -2,6 +2,7 @@ import csv
 from pathlib import Path
 import matplotlib.pyplot as plt
 import os
+
 import utils
 
 file_path_1 = Path(r"C:\Users\ASUS\Desktop\sheet-A.csv")
@@ -39,7 +40,19 @@ class Glacier:
 
         #raise NotImplementedError
     def plot_mass_balance(self, output_path):
-        raise NotImplementedError
+        x = list(self.glacier_measurement.keys())
+        y = list(self.glacier_measurement.values())
+        plt.plot(x, y, c='y')
+        plt.title('Mass balance measurements against the years for %s' % self.name)
+        plt.xlabel('Year')
+        plt.ylabel('Mass_balance')
+        my_path = os.path.abspath(output_path) # Figures out the path
+        my_file = 'Plot for glacier %s.png' % self.name # file name
+        plt.savefig(os.path.join(my_path, my_file))  # save the plot
+        plt.show()
+        #raise NotImplementedError
+
+
 
         
 class GlacierCollection:
@@ -93,18 +106,16 @@ class GlacierCollection:
                         value_list = list(year_value.values())
                         g = Glacier
                         g.add_mass_balance_measurement(self.glacier[list_Mname[i]].glacier_measurement, year_list, value_list, boolean)
-                        #self.glacier[list_Mname[i]] = year_mass_balance
-                        #print(year_list, value_list, boolean)
+                        #g.plot_mass_balance(self.glacier[list_Mname[i]], file_path_3)
                 else:
                     year_value, boolean = utils.mass_change(list_Mname[i] , list_Mname, list_year, list_value) 
                     year_list = list(year_value.keys())
                     value_list = list(year_value.values())
                     g = Glacier
                     g.add_mass_balance_measurement(self.glacier[list_Mname[i]].glacier_measurement, year_list, value_list, boolean)
-                    #self.glacier[list_Mname[i]] = year_mass_balance
-                    #print(year_list, value_list, boolean)
+                    
             
-            print(self.glacier['ARTESONRAJU'].glacier_measurement)
+            #print(self.glacier['ARTESONRAJU'].glacier_measurement)
 
             #a = 0
             #for i in range(len(self.M_name)):
@@ -251,7 +262,7 @@ class GlacierCollection:
                 name.append(list_keys[i])
                 # the latest measurement value of this glacier
                 last_value.append(list(measurement.values())[-1])
-
+        
         largest_value = utils.n_max(last_value,1)
         smallest_value = utils.n_min(last_value,1)
         key_largest = name[largest_value[0]]
@@ -288,5 +299,8 @@ c.read_mass_balance_data(file_path_2)
 #print(c.find_nearest(-30,-70,5))
 #print(c.sort_by_latest_mass_balance(5,False))
 #print(c.summary())
-print(c.plot_extremes(file_path_3))
-#g = Glacier('03292', 'ARTESONRAJU', 'PE', -8.95, -77.62, 534).plot_mass_balance(file_path_3)
+#print(c.plot_extremes(file_path_3))
+g_mass = c.glacier
+g = g_mass['TUNSBERGDALSBREEN']
+Glacier.plot_mass_balance(g, file_path_3)
+
