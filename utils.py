@@ -43,17 +43,18 @@ def n_max(list1, n):
 
 
 def calculate_shunk_rate(list1):
-    # Use for summary()
+    # Use in summary()
     a = 0
     for i in range(len(list1)):
         if list1[i] < 0:
             a += 1
     b = a / len(list1)
     c = int(round(b,2) * 100)
+    
     return c
 
 
-def mass_change(Object_name, name, year, value):
+def mass_change(Object_name, name, year, value, lb):
     
     a = []
     d = {}
@@ -68,7 +69,7 @@ def mass_change(Object_name, name, year, value):
     c = -1
     boolean = []
     mass_balance = []
-    if a1 == a2:
+    if a1 == a2 and lb[a1] == '9999':
         boolean.append(False)        
         d[int(year[a1])] = float(value[a1])
 
@@ -78,7 +79,7 @@ def mass_change(Object_name, name, year, value):
                 c += 1
                 if year[i2] != year[i2+1]:
                     k = i2 + 1            
-                    if c >= 1:
+                    if c >= 1 and lb[i2] == '9999' and lb[i2-1] != '9999':
                         for j in range(i2-c, i2+1):
                             mass_balance.append(float(value[j])) 
                         boolean.append(True)   
@@ -90,7 +91,7 @@ def mass_change(Object_name, name, year, value):
                         d[int(year[i2])] = float(value[i2]) 
                         c = -1
             else:
-                if year[i2] != year[i2-1]:
+                if year[i2] != year[i2-1] and lb[i2] == '9999':
                     boolean.append(False)
                     d[int(year[i2])] = float(value[i2])
                 else:
