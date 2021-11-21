@@ -24,11 +24,20 @@ class Glacier:
 
     def add_mass_balance_measurement(self, year, mass_balance, boolean):
         #self.measurement = {}
-        # if boolean == True 
+        
+        for i in range(len(year)):
+            sum_mass = 0
+            if boolean[i] == True:
+                for i1 in range(len(mass_balance[i])-1):
+                    sum_mass += mass_balance[i][i1]
+                self[year[i]] = sum_mass
+            else:
+                sum_mass = mass_balance[i]
+                self[year[i]] = sum_mass
 
+        
 
-        raise NotImplementedError
-
+        #raise NotImplementedError
     def plot_mass_balance(self, output_path):
         raise NotImplementedError
 
@@ -40,33 +49,18 @@ class GlacierCollection:
         with open(file_path) as A:
             reader_A = csv.reader(A)
             filedata_A = list(reader_A)
-            list_unit = []
-            list_name = []
-            list_id = []
-            list_latitude = []
-            list_longitude = []
-            list_code = []
+
             self.glacier = {}            
             for i, row in enumerate(filedata_A):
                 if i > 0 and i < len(filedata_A):
-                    list_unit.append(row[0])                    
-                    list_name.append(row[1])
-                    list_id.append(row[2])                    
-                    list_latitude.append(float(row[5]))                    
-                    list_longitude.append(float(row[6]))                 
-                    list_code.append(int(row[7]+row[8]+row[9]))
-                    d = Glacier(self.id[i], self.name, self.unit, self.lat, self.lon, self.code)
-            self.unit = list_unit
-            self.name = list_name
-            self.id = list_id
-            self.lat = list_latitude
-            self.lon = list_longitude
-            self.code = list_code
-
-               
-                
-
-            
+                    unit = row[0]                    
+                    name = row[1]
+                    id = row[2]                    
+                    latitude = (float(row[5]))                    
+                    longitude = (float(row[6]))                 
+                    code =(int(row[7]+row[8]+row[9]))
+                    d = Glacier(id, name, unit, latitude, longitude, code)
+                    self.glacier[name] = d
                 
                 
 
@@ -79,32 +73,39 @@ class GlacierCollection:
             list_Mname = []
             list_Mid = []
             list_year = []
-            list_lb = []
-            list_ub = []
-            list_ab = []
+            list_lb = []            
+            list_value = []
+            value = []
+            self.mass_balance = {}
             for i, row in enumerate(filedata_EE):
                 if i > 0 and i < len(filedata_EE):
-                    list_Munit.append(row[0])
-                    self.M_unit = list_Munit
-
-                    list_Mname.append(row[1])
-                    self.M_name = list_Mname
-
-                    list_Mid.append(row[2])
-                    self.M_id = list_Mid
-
+                    list_Munit.append(row[0])                   
+                    list_Mname.append(row[1])                    
+                    list_Mid.append(row[2])                   
                     list_year.append(row[3])
-                    self.year = list_year
-
-                    list_lb.append(row[4])
-                    self.lb = list_lb
-
-                    list_ub.append(row[5])
-                    self.ub = list_ub
-
-                    list_ab.append(row[11])
-                    self.value = list_ab
+                    list_lb.append(row[4])                    
+                    list_value.append(row[11])
+            for i in range(len(list_Mname)):
+                if i < len(list_Mname)-1:
+                    if list_Mname[i] != list_Mname[i+1]:
+                        year_value, boolean = utils.mass_change(list_Mname[i] , list_Mname, list_year, list_value)
+                        year_list = list(year_value.keys())
+                        value_list = list(year_value.values())
+                        g = Glacier
+                        g.add_mass_balance_measurement(self.glacier[list_Mname[i]].glacier_measurement, year_list, value_list, boolean)
+                        #self.glacier[list_Mname[i]] = year_mass_balance
+                        #print(year_list, value_list, boolean)
+                else:
+                    year_value, boolean = utils.mass_change(list_Mname[i] , list_Mname, list_year, list_value) 
+                    year_list = list(year_value.keys())
+                    value_list = list(year_value.values())
+                    g = Glacier
+                    g.add_mass_balance_measurement(self.glacier[list_Mname[i]].glacier_measurement, year_list, value_list, boolean)
+                    #self.glacier[list_Mname[i]] = year_mass_balance
+                    #print(year_list, value_list, boolean)
             
+            print(self.glacier['ARTESONRAJU'].glacier_measurement)
+
             #a = 0
             #for i in range(len(self.M_name)):
                 #a = 0
@@ -119,10 +120,12 @@ class GlacierCollection:
 
     def find_nearest(self, lat, lon, n):
         """Get the n glaciers closest to the given coordinates."""
-        if type(n) != int:
+        if n == None:
             n = 5
-        if n > len(self.name):
-            raise NotImplementedError('n should not be over the number of glacier')
+        if type(n) != int:
+            raise NotImplementedError('n should be a integer')
+        if n > len(self.name) or n <= 0:
+            raise NotImplementedError('n should not be over the number of glacier or smaller than 0')
         if lat < -90 or lat > 90 or lon < -180 or lon > 180:
             raise NotImplementedError('the latitude should be between -90 and 90, the longitude between -180 and 180')
         distance = []
@@ -249,8 +252,8 @@ class GlacierCollection:
 
 c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
-print(c.filter_by_code('6?8'))
-#print(c.find_nearest(-30,-70,5))
+#print(c.filter_by_code('6?8'))
+print(c.find_nearest(-30,-70,5))
 #print(c.sort_by_latest_mass_balance(5,False))
 #print(c.summary())
 #print(c.plot_extremes(file_path3))
