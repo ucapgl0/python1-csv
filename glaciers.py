@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 import matplotlib.pyplot as plt
-import os
+
 
 import utils
 
@@ -42,9 +42,8 @@ class Glacier:
         plt.title('Mass balance measurements against the years for %s' % self.name)
         plt.xlabel('Year')
         plt.ylabel('Mass_balance')
-        my_path = os.path.abspath(output_path) # Figures out the path
-        my_file = 'Plot for glacier %s.png' % self.name # file name
-        plt.savefig(os.path.join(my_path, my_file))  # save the plot
+        
+        plt.savefig(output_path)  # save the plot
         plt.show()
         #raise NotImplementedError
 
@@ -285,10 +284,8 @@ class GlacierCollection:
         plt.xlabel('Year')
         plt.ylabel('Mass_balance')
         plt.legend()
-
-        my_path = os.path.abspath(output_path) # Figures out the path
-        my_file = 'Plot for two extreme glaciers.png' # file name
-        plt.savefig(os.path.join(my_path, my_file))  # save the plot
+        
+        plt.savefig(output_path)  # save the plot
         
         plt.show()
         
@@ -300,9 +297,9 @@ c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
 #print(c.filter_by_code('6?8'))
 #print(c.find_nearest(-30,-70,5))
-print(c.sort_by_latest_mass_balance(n,False))
+#print(c.sort_by_latest_mass_balance(n,False))
 #print(c.summary())
 #print(c.plot_extremes(file_path_3))
-#Glacier.plot_mass_balance(c.glacier['REMBESDALSKAAKA'], file_path_3)
-#print(list(c.glacier.keys())[1694])
+Glacier.plot_mass_balance(c.glacier['03292'], file_path_3)
+
 

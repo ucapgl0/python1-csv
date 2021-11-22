@@ -4,10 +4,7 @@ import matplotlib.pyplot as plt
 
 
 def haversine_distance(lat1, lon1, lat2, lon2): # Use in calculating nearest glaciers
-    """Return the distance in km between two points around the Earth.
-    
-    Latitude and longitude for each point are given in degrees.
-    """
+
     if lat2 < -90 or lat2 > 90 or lon2 < -180 or lon2 > 180:
         raise NotImplementedError('the latitude should be between -90 and 90, the longitude between -180 and 180')
     R = 6371
