@@ -21,12 +21,11 @@ def haversine_distance(lat1, lon1, lat2, lon2): # Use in calculating nearest gla
     d = 2*R*arcs(math.sqrt(s((lat2_r-lat1_r)/2)**2 + c(lat1_r)*c(lat2_r)*(s((lon2_r-lon1_r)/2)**2)))
     return d
     
-    raise NotImplementedError
-
+    
 
 def n_min(list1, n): 
     # Use in find_nearest() and reverse condition of sort_by_latest_mass_balance() and plot_extremes()
-    
+    # return the index of n smallest values in list 
     min_num_index_list = map(list1.index, heapq.nsmallest(n, list1))
 
     return list(min_num_index_list)
@@ -34,12 +33,11 @@ def n_min(list1, n):
 
 def n_max(list1, n): 
     # Use in sort_by_latest_mass_balance() and plot_extremes()
+    #return the index of n largest values in list
 
     max_num_index_list = map(list1.index, heapq.nlargest(n, list1))
 
     return list(max_num_index_list)
-
-
 
 
 def calculate_shunk_rate(list1):
@@ -54,56 +52,7 @@ def calculate_shunk_rate(list1):
     return c
 
 
-def mass_change(Object_name, name, year, value, lb):
-    
-    a = []
-    d = {}
-    for i in range(len(name)):
-        if name[i] == Object_name:
-            a.append(i)  
-    a1 = a[0]
-    a2 = a[-1]
-    
-    c = -1
-    boolean = []
-    mass_balance = []
-    if a1 == a2 and lb[a1] == '9999':
-        boolean.append(False)        
-        d[int(year[a1])] = float(value[a1])
 
-    else:
-        for i2 in range(a1, a2 + 1):
-            if i2 < a2:
-                c += 1
-                if year[i2] != year[i2+1]:
-                    k = i2 + 1            
-                    if c >= 1 and lb[i2] == '9999' and lb[i2-1] != '9999':
-                        for j in range(i2-c, i2+1):
-                            mass_balance.append(float(value[j])) 
-                        boolean.append(True)   
-                        d[int(year[i2])] = mass_balance
-                        c = -1
-                        mass_balance = []
-                    else:
-                        boolean.append(False)
-                        d[int(year[i2])] = float(value[i2]) 
-                        c = -1
-            else:
-                if year[i2] != year[i2-1] and lb[i2] == '9999':
-                    boolean.append(False)
-                    d[int(year[i2])] = float(value[i2])
-                else:
-                    for i3 in range(k, a2 + 1):
-                        mass_balance.append(float(value[i3]))
-                    boolean.append(True)
-                    d[int(year[i2])] = mass_balance
-      
-    return d, boolean
-
-
-def plot(dictionary):
-        
-    return plt.show()
 
         
 
