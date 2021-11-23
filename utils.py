@@ -31,7 +31,6 @@ def n_min(list1, n):
 def n_max(list1, n): 
     # Use in sort_by_latest_mass_balance() and plot_extremes()
     #return the index of n largest values in list
-
     max_num_index_list = map(list1.index, heapq.nlargest(n, list1))
 
     return list(max_num_index_list)

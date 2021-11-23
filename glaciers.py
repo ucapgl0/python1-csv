@@ -4,10 +4,8 @@ import matplotlib.pyplot as plt
 import utils
 
 
-
 file_path_1 = Path(r"C:\Users\ASUS\Desktop\sheet-A.csv")
 file_path_2 = Path(r"C:\Users\ASUS\Desktop\sheet-EE.csv")
-#file_path_3 = Path(r"C:\Users\ASUS\Desktop\QYDT7")
 
 
 n = 5
@@ -31,8 +29,8 @@ class Glacier:
         elif year in list(self.keys()):
             if boolean == True:
                 self[year] += mass_balance
-               
         
+     
 
     def plot_mass_balance(self, output_path):
 
@@ -68,6 +66,10 @@ class GlacierCollection:
                         raise ValueError('The lenth of ID is 5')
 
                     # Check the latitude and longitude
+                    if row[5].isdigit() == False and row[5][0] != '-' and '.' not in row[5]:
+                        raise TypeError('The latitude should be number')
+                    if row[6].isdigit() == False and row[6][0] != '-' and '.' not in row[6]:
+                        raise TypeError('The longiitude should be number')
                     if float(row[5]) < -90 or float(row[5]) > 90 or float(row[6]) < -180 or float(row[6]) > 180:
                         raise ValueError('The latitude should be between -90 and 90, the longitude between -180 and 180.')
 
@@ -120,7 +122,6 @@ class GlacierCollection:
                     if float(row[4]) > 9999:
                         raise ValueError('The lower bound should not be over 9999')
 
-
                     # read the data if the mass balance is not empty(improper)
                     if row[11] != '':                        
                         # Check the mass balance value
@@ -157,6 +158,10 @@ class GlacierCollection:
         
         if n > len(self.glacier):
             raise TypeError('n should not be over the number of glacier')
+        if type(lat) != float and type(lat) != int:
+            raise TypeError('The latitude should be number')
+        if type(lon) != float and type(lon) != int:
+            raise TypeError('The longiitude should be number')
         if lat < -90 or lat > 90 or lon < -180 or lon > 180:
             raise ValueError('the latitude should be between -90 and 90, the longitude between -180 and 180')
         distance = []
@@ -220,7 +225,7 @@ class GlacierCollection:
 
 
     def sort_by_latest_mass_balance(self, n, reverse):
-        """Return the N glaciers with the highest area accumulated in the last measurement."""
+        
         if n > len(self.glacier):
             raise ValueError('n should not be over the number of object.')
         list_keys = list(self.glacier.keys())
@@ -317,20 +322,20 @@ class GlacierCollection:
         plt.ylabel('Mass_balance')
         plt.legend()
         
-        plt.savefig(output_path)  # save the plot
-        
+        plt.savefig(output_path)  # save the plot        
         plt.show()
-    
 
 
+
+#Some check
 
 c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
 #print(c.filter_by_code('6?6'))
-#print(c.find_nearest(-30,-70,5))
+#print(c.find_nearest(-30,-70.5,5))
 #print(c.sort_by_latest_mass_balance(7,False))
 #print(c.summary())
-#print(c.plot_extremes(file_path_3))
-#Glacier.plot_mass_balance(c.glacier['03292'], file_path_3)
+#print(c.plot_extremes(file_path))
+#Glacier.plot_mass_balance(c.glacier['03292'], file_path)
 
 
