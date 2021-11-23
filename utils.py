@@ -6,7 +6,7 @@ import heapq
 def haversine_distance(lat1, lon1, lat2, lon2): # Use in calculating nearest glaciers
 
     if lat2 < -90 or lat2 > 90 or lon2 < -180 or lon2 > 180:
-        raise NotImplementedError('the latitude should be between -90 and 90, the longitude between -180 and 180')
+        raise ValueError('the latitude should be between -90 and 90, the longitude between -180 and 180')
     R = 6371
     arcs = math.asin
     s = math.sin

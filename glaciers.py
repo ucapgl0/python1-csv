@@ -7,7 +7,7 @@ import utils
 
 file_path_1 = Path(r"C:\Users\ASUS\Desktop\sheet-A.csv")
 file_path_2 = Path(r"C:\Users\ASUS\Desktop\sheet-EE.csv")
-file_path_3 = Path(r"C:\Users\ASUS\Desktop\QYDT7")
+#file_path_3 = Path(r"C:\Users\ASUS\Desktop\QYDT7")
 
 
 n = 5
@@ -62,17 +62,27 @@ class GlacierCollection:
 
                 if i > 0:
                     # Check the id
-                    if len(row[2]) != 5 or row[2].isdigit() == False:
-                        raise NotImplementedError('ID is comprised of exactly 5 digits.')
+                    if row[2].isdigit() == False:
+                        raise TypeError('ID is comprised of digits.')
+                    if len(row[2]) != 5:
+                        raise ValueError('The lenth of ID is 5')
+
                     # Check the latitude and longitude
                     if float(row[5]) < -90 or float(row[5]) > 90 or float(row[6]) < -180 or float(row[6]) > 180:
-                        raise NotImplementedError('The latitude should be between -90 and 90, the longitude between -180 and 180.')
+                        raise ValueError('The latitude should be between -90 and 90, the longitude between -180 and 180.')
+
                     # Check the unit
-                    if len(row[0]) != 2 or (row[0].isupper() == False and row[0] != '99'):
-                        raise NotImplementedError('The political unit is a string of length 2, composed only of capital letters or the special value ”99”.') 
+                    if row[0].isupper() == False and row[0] != '99':
+                        raise TypeError('unit composed only of capital letters or the special value ”99”.')
+                    if len(row[0]) != 2 :
+                        raise ValueError('The political unit is a string of length 2') 
+                    
                     # Check the code
-                    if len(row[7]+row[8]+row[9]) != 3 or (row[7]+row[8]+row[9]).isdigit() == False:
-                        raise NotImplementedError('The code shoud be 3-digit number.')
+                    if (row[7]+row[8]+row[9]).isdigit() == False:
+                        raise TypeError('The code shoud be 3-digit number.')
+                    if len(row[7]+row[8]+row[9]) != 3:
+                        raise ValueError('The lenth of code should be 3')
+
                     unit = row[0]                    
                     name = row[1]
                     id = row[2]                    
@@ -97,11 +107,26 @@ class GlacierCollection:
             g = Glacier
             for i, row in enumerate(filedata_EE):
                 if i > 0:
-                    if int(row[3]) > 2021:
-                        raise NotImplementedError('The year could not be in future.')
                     
-                    if row[11] != '':
-                        # read the data if the mass balance is not empty(improper)
+                    # Check the year
+                    if row[3].isdigit == False:
+                        raise TypeError('The year should be a number.')
+                    if int(row[3]) > 2021:
+                        raise ValueError('The year could not be in future.')
+                    
+                    # Check the lower bound
+                    if row[4].isdigit() == False:
+                        raise TypeError('The lower bound should be a number.')
+                    if float(row[4]) > 9999:
+                        raise ValueError('The lower bound should not be over 9999')
+
+
+                    # read the data if the mass balance is not empty(improper)
+                    if row[11] != '':                        
+                        # Check the mass balance value
+                        if row[11].isdigit() == False and row[11][0] != '-':
+                            raise TypeError('The mass balance value should be a number.')
+                                                
                         list_Munit.append(row[0])                   
                         list_Mname.append(row[1])                    
                         list_Mid.append(row[2])                   
@@ -109,7 +134,7 @@ class GlacierCollection:
                         list_lb.append(row[4])                    
                         list_value.append(float(row[11]))
                                   
-            # Check all glacier measurement have already been defined correctly
+            # Check all name, unit and id of glaciers in measurement have already been defined correctly
             v = list(self.glacier.values())
             for i in range(len(list_Mname)):
                 a = 0
@@ -117,7 +142,7 @@ class GlacierCollection:
                     if list_Mname[i] == v[j].name and list_Mid[i] == v[j].id and list_Munit[i] == v[j].unit:
                         a += 1
                 if a == 0:
-                    raise NotImplementedError('All the glaciers should be defined correctly.')
+                    raise ValueError('All the glaciers should be defined correctly.')
             
             
             for i in range(len(list_Mid)):
@@ -130,12 +155,10 @@ class GlacierCollection:
             
     def find_nearest(self, lat, lon, n):
         
-        if type(n) != int:
-            n = 5
         if n > len(self.glacier):
-            raise NotImplementedError('n should not be over the number of glacier')
+            raise TypeError('n should not be over the number of glacier')
         if lat < -90 or lat > 90 or lon < -180 or lon > 180:
-            raise NotImplementedError('the latitude should be between -90 and 90, the longitude between -180 and 180')
+            raise ValueError('the latitude should be between -90 and 90, the longitude between -180 and 180')
         distance = []
         list_key = list(self.glacier.keys())
         for i in range(len(self.glacier)):
@@ -153,13 +176,14 @@ class GlacierCollection:
 
 
     def filter_by_code(self, code_pattern):
-        
-        if len(code_pattern) != 3:
-            raise NotImplementedError("The length of code_pattern should be 3")
+            
         if type(code_pattern) != str:
-            raise NotImplementedError("The type of code_pattern should be string")
+            raise TypeError("The type of code_pattern should be string")
         if code_pattern.isdigit() == False and '?' not in code_pattern:
-            raise NotImplementedError("The code_pattern should only include numbers and '?'") 
+            raise TypeError("The code_pattern should only include numbers and '?'") 
+        if len(code_pattern) != 3:
+            raise ValueError("The length of code_pattern should be 3")
+
         id1 = []
         id2 = []
         id3 = []
@@ -188,14 +212,17 @@ class GlacierCollection:
             for i in range(len(self.glacier)):
                 id3.append(self.glacier[list_key[i]].name)
         
-        return list(set(id1).intersection(id2,id3))
+        name = list(set(id1).intersection(id2,id3))
+        # Convenient to test by sort
+        name.sort()
+        return name
 
 
 
     def sort_by_latest_mass_balance(self, n, reverse):
         """Return the N glaciers with the highest area accumulated in the last measurement."""
         if n > len(self.glacier):
-            raise NotImplementedError('n should not be over the number of object.')
+            raise ValueError('n should not be over the number of object.')
         list_keys = list(self.glacier.keys())
         id = []
         latest_value = []
@@ -208,7 +235,7 @@ class GlacierCollection:
                 latest_value.append(list(measurement.values())[-1])
                 
         a = []
-        if reverse == False:
+        if bool(reverse) == False:
             largest_value = utils.n_max(latest_value,n)
             
             for i in range(n):
@@ -217,14 +244,14 @@ class GlacierCollection:
                 a.append(glacier_object)
             return a
 
-        if reverse == True:
+        if bool(reverse) == True:
             smallest_value = utils.n_min(latest_value,n)
             
             for i in range(n):
                 key = id[smallest_value[i]]
                 glacier_object = self.glacier[key]
                 a.append(glacier_object)
-            return a    
+            return a   
                
 
 
@@ -299,9 +326,9 @@ class GlacierCollection:
 
 c = GlacierCollection(file_path_1)
 c.read_mass_balance_data(file_path_2)
-#print(c.filter_by_code('6?8'))
+#print(c.filter_by_code('6?6'))
 #print(c.find_nearest(-30,-70,5))
-#print(c.sort_by_latest_mass_balance(n,False))
+#print(c.sort_by_latest_mass_balance(7,False))
 #print(c.summary())
 #print(c.plot_extremes(file_path_3))
 #Glacier.plot_mass_balance(c.glacier['03292'], file_path_3)
