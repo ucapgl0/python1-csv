@@ -1,6 +1,6 @@
 import math
 import heapq
-import matplotlib.pyplot as plt
+
 
 
 def haversine_distance(lat1, lon1, lat2, lon2): # Use in calculating nearest glaciers
@@ -37,16 +37,7 @@ def n_max(list1, n):
     return list(max_num_index_list)
 
 
-def calculate_shunk_rate(list1):
-    # Use in summary()
-    a = 0
-    for i in range(len(list1)):
-        if list1[i] < 0:
-            a += 1
-    b = a / len(list1)
-    c = int(round(b,2) * 100)
 
-    return c
 
 
 

@@ -1,13 +1,13 @@
 import csv
 from pathlib import Path
 import matplotlib.pyplot as plt
-
-
 import utils
+
+
 
 file_path_1 = Path(r"C:\Users\ASUS\Desktop\sheet-A.csv")
 file_path_2 = Path(r"C:\Users\ASUS\Desktop\sheet-EE.csv")
-file_path_3 = Path(r"C:\Users\ASUS\Desktop\21080370")
+file_path_3 = Path(r"C:\Users\ASUS\Desktop\QYDT7")
 
 
 n = 5
@@ -22,17 +22,17 @@ class Glacier:
         self.lon = lon
         self.code = code
         self.glacier_measurement = {}
-    #raise NotImplementedError
+    
 
     def add_mass_balance_measurement(self, year, mass_balance, boolean):
-        #self.measurement = {}
+        
         if year not in list(self.keys()):
             self[year] = mass_balance
         elif year in list(self.keys()):
             if boolean == True:
                 self[year] += mass_balance
                
-        #raise NotImplementedError
+        
 
     def plot_mass_balance(self, output_path):
 
@@ -45,14 +45,14 @@ class Glacier:
         
         plt.savefig(output_path)  # save the plot
         plt.show()
-        #raise NotImplementedError
+        
 
 
         
 class GlacierCollection:
 
     def __init__(self, file_path):
-        #raise NotImplementedError("my test: not implemented!")
+        
         with open(file_path) as A:
             reader_A = csv.reader(A)
             filedata_A = list(reader_A)
@@ -83,9 +83,8 @@ class GlacierCollection:
                 
           
 
-
     def read_mass_balance_data(self, file_path):
-        #raise NotImplementedError
+        
         with open(file_path) as EE:
             reader_EE = csv.reader(EE)
             filedata_EE = list(reader_EE)
@@ -226,8 +225,7 @@ class GlacierCollection:
                 glacier_object = self.glacier[key]
                 a.append(glacier_object)
             return a    
-        
-        #raise NotImplementedError
+               
 
 
     def summary(self):
@@ -242,15 +240,22 @@ class GlacierCollection:
                 year.append(list(measurement.keys())[0])
                 # the latest measurement value of this glacier
                 latest_value.append(list(measurement.values())[-1])
+        
+        # Sort the years to find the earliest year
         year.sort()
-                
-        shunk_rate = utils.calculate_shunk_rate(latest_value)
+
+        # Calcualte the shunk rate
+        shunk_numbers = 0
+        for i in range(len(latest_value)):
+            if latest_value[i] < 0:
+                shunk_numbers += 1
+        shunk_rate = shunk_numbers / len(latest_value)
+        shunk_percentage = int(round(shunk_rate,2) * 100)  
         
         print('This collection has %d glaciers.' % len(self.glacier))
         print('The earliest measurement was in %d.' % year[0])
-        return str(shunk_rate) + "%" + " of glaciers shrunk in their last measurement."
+        return str(shunk_percentage) + "%" + " of glaciers shrunk in their last measurement."
         
-        #raise NotImplementedError
 
 
     def plot_extremes(self, output_path):
@@ -288,8 +293,7 @@ class GlacierCollection:
         plt.savefig(output_path)  # save the plot
         
         plt.show()
-        
-        #raise NotImplementedError
+    
 
 
 
@@ -300,6 +304,6 @@ c.read_mass_balance_data(file_path_2)
 #print(c.sort_by_latest_mass_balance(n,False))
 #print(c.summary())
 #print(c.plot_extremes(file_path_3))
-Glacier.plot_mass_balance(c.glacier['03292'], file_path_3)
+#Glacier.plot_mass_balance(c.glacier['03292'], file_path_3)
 
 
